@@ -1,6 +1,12 @@
 # netflix-gpt
+- A netflix clone that uses chatgpt api's
 
-A netflix clone that uses chatgpt api's
+# NetflixGPT
+- Create React App
+- Configured Tailwind CSS
+- Header
+- Login Form
+- Signup Form
 
 # Features
 
