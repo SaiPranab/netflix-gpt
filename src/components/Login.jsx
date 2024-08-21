@@ -1,15 +1,17 @@
 import React, { useRef, useState } from "react";
 import Header from "./Header";
 import { checkvalidData } from "../utils/validate";
+import { auth } from "../utils/firebase";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = () => {
     const [isSignInForm, setIsSignInForm] = useState(true);
-    
-    const[errorMessage, setErrorMessage] = useState(null)
 
-    const name = useRef(null)
-    const email = useRef(null)
-    const password = useRef(null)
+    const [errorMessage, setErrorMessage] = useState(null);
+
+    const name = useRef(null);
+    const email = useRef(null);
+    const password = useRef(null);
 
     const toggleSignInForm = () => {
         setIsSignInForm(!isSignInForm);
@@ -17,9 +19,47 @@ const Login = () => {
 
     const handleButtonClick = (e) => {
         // Validate the form data
-        const message = checkvalidData(email.current.value, password.current.value)
-        setErrorMessage(message)
-    }
+        const message = checkvalidData(
+            email.current.value,
+            password.current.value
+        );
+        setErrorMessage(message);
+
+        if (message) {
+            return;
+        }
+
+        // SignIn/ SignUp logic
+        if (!isSignInForm) {
+            // SignUp Logic
+            createUserWithEmailAndPassword(auth,email.current.value,password.current.value)
+                .then((userCredential) => {
+                    // Signed up
+                    const user = userCredential.user;
+                    console.log(user);
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+
+                    setErrorMessage(`${errorMessage} : ${errorMessage}`);
+                });
+            } else {
+                // SignIn Logic
+                signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+                .then((userCredential) => {
+                    // Signed in
+                    const user = userCredential.user;
+                    console.log(user);
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+
+                    setErrorMessage(`${errorMessage} : ${errorMessage}`);
+                });
+        }
+    };
 
     return (
         <div>
@@ -31,14 +71,15 @@ const Login = () => {
                 />
             </div>
 
-            <form onClick={(e) => e.preventDefault()}
+            <form
+                onClick={(e) => e.preventDefault()}
                 action=" "
                 className="absolute p-12 bg-black w-3/12 mx-auto my-36 right-0 left-0 text-white rounded-lg bg-opacity-80"
             >
                 <h1 className="font-bold text-3xl py-4">
                     {isSignInForm ? "Sign In" : "Sign Up"}
                 </h1>
-                { isSignInForm || (
+                {isSignInForm || (
                     <input
                         type="text"
                         placeholder="Full Name"
@@ -58,7 +99,10 @@ const Login = () => {
                     className="p-4 my-4 w-full bg-gray-700"
                 />
                 <p className="text-red-500 font-bold">{errorMessage}</p>
-                <button className="p-4 my-6 bg-red-700 w-full rounded-lg" onClick={handleButtonClick}>
+                <button
+                    className="p-4 my-6 bg-red-700 w-full rounded-lg"
+                    onClick={handleButtonClick}
+                >
                     {isSignInForm ? "Sign In" : "Sign Up"}
                 </button>
                 <p className="py-4 cursor-pointer" onClick={toggleSignInForm}>
