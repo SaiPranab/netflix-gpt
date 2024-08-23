@@ -17,7 +17,8 @@
 - Created our redux store with userSlice
 - Implemented Signout feature
 - Update profile API call
-- 
+- BugFix : Signup user displayName & Profile Picture update
+- BugFix : If the user  is not logged in Redirect  /browse  to LoginPage  & vice-versa.
 
 # Features
 
